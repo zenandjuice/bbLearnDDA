@@ -11,13 +11,19 @@ SELECT
            ELSE 'OTHER'
    END AS "Row Status",
    course.available_ind,
+   -- calculates percentage of quota and comments on level
+      round(((nullif(course.size_coursefiles::decimal,0)/ffile.quota::decimal)*100),2) as "Percentage of Quota",
+   case
+		when   round(((nullif(course.size_coursefiles::decimal,0)/ffile.quota::decimal)*100),2) > '100' then 'Over Quota'
+		when   round(((nullif(course.size_coursefiles::decimal,0)/ffile.quota::decimal)*100),2) > '90' and    round(((nullif(course.size_coursefiles::decimal,0)/ffile.quota::decimal)*100),2) < '100' then 'Dangerouos' 
+   		when   round(((nullif(course.size_coursefiles::decimal,0)/ffile.quota::decimal)*100),2) > '80' and    round(((nullif(course.size_coursefiles::decimal,0)/ffile.quota::decimal)*100),2) < '90' then 'Warning'
+   		else 'Acceptable'
+   	end as "Level",
+   -- Course Size and Quota
    pg_size_pretty(course.size_coursefiles) as "Content Collection Size",
    pg_size_pretty(ffile.quota) as "Quota",
-   --split_part(furl.full_path, '/', 3) as course_id,
    furl.full_path,
    ffile.last_update_date
-   -- ,ffile.quota_locked,
-   -- ffile.file_id, ffile.entry_id
 FROM xyf_urls furl
 JOIN xyf_files ffile on ffile.file_id = furl.file_id
 inner join dblink('dbname=[dbname] user=[username] password=[password]',
