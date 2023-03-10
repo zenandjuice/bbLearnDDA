@@ -1,0 +1,25 @@
+-- Similar to Date Management Report, for Grade Center Columns
+select
+  cm.course_id,
+  gm.title as "Column Name", 
+    CASE 
+          WHEN gm.user_created_ind = 'Y' THEN 'Manual Column'
+          WHEN gm.user_created_ind = 'N' THEN 'Tool Column'
+          ELSE 'OTHER'
+  END AS "Column Type",
+  cc.start_date as "Display After",
+  cc.end_date as "Display Until",
+  gm.due_date as "Due Date",
+  gm.score_provider_handle as "Score Content Handler", 
+  cc.title as "Content Name",
+  (SELECT cc2.title FROM course_contents cc2 where cc.parent_pk1 = cc2.pk1) AS "Folder Name",
+  cc.available_ind as "Content Availability"
+FROM gradebook_main gm
+  inner JOIN course_main cm on cm.pk1 = gm.crsmain_pk1
+  left join course_contents cc on cc.pk1 = gm.course_contents_pk1 
+WHERE gm.calculated_ind = 'N'
+  AND gm.deleted_ind = 'N'
+-- modify course_id here
+AND cm.course_id = '[course_id]'
+--  and ac.start_date is not null
+order by gm.title, cc.d
