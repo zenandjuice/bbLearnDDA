@@ -48,4 +48,6 @@ and furl.full_path not like '/courses/%/%'
 and course.row_status = '0'
 -- enter course_id string to narrow down results
 and course.course_id like '%'
+-- only return courses that are over 80% of their quota
+-- and round(((nullif(course.size_coursefiles::decimal,0)/ffile.quota::decimal)*100),2) > '80'
 order by course.size_coursefiles DESC
