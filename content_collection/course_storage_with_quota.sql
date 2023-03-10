@@ -10,6 +10,7 @@ SELECT
            WHEN course.row_status = 2 THEN 'DISABLED'
            ELSE 'OTHER'
    END AS "Row Status",
+   course.available_ind,
    pg_size_pretty(course.size_coursefiles) as "Content Collection Size",
    pg_size_pretty(ffile.quota) as "Quota",
    --split_part(furl.full_path, '/', 3) as course_id,
@@ -20,8 +21,8 @@ SELECT
 FROM xyf_urls furl
 JOIN xyf_files ffile on ffile.file_id = furl.file_id
 inner join dblink('dbname=[dbname] user=[username] password=[password]',
-	'select course_main.course_id, course_main.pk1, course_main.row_status, course_size.size_coursefiles FROM course_main JOIN course_size ON course_main.pk1 = course_size.crsmain_pk1')
-    AS course(course_id varchar(100), crsmain_pk1 int8, row_status int8, size_coursefiles int8)
+	'select course_main.course_id, course_main.pk1, course_main.row_status, course_main.available_ind, course_size.size_coursefiles FROM course_main JOIN course_size ON course_main.pk1 = course_size.crsmain_pk1')
+    AS course(course_id varchar(100), crsmain_pk1 int8, row_status int8, available_ind bpchar(1), size_coursefiles int8)
     ON furl.file_name = course.course_id
 WHERE file_type_code = 'D'
 AND furl.full_path like '/courses/%'
