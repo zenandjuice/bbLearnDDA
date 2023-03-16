@@ -207,3 +207,18 @@ FROM gradebook_main gm
 WHERE qad.data  LIKE '%osv-kaltura%'
 -- answers with kaltura entries
 --WHERE qrd.data  LIKE '%osv-kaltura%'
+
+
+-- Assignment submissions using the Kaltura B2 Mashup
+
+SELECT cm.course_id, u.user_id, gm.title, a.attempt_date-- , a.STUDENT_SUBMISSION
+FROM attempt a
+INNER JOIN gradebook_grade gg ON a.gradebook_grade_pk1 = gg.pk1
+INNER JOIN gradebook_main gm ON gg.gradebook_main_pk1 = gm.pk1
+INNER JOIN course_main cm ON gm.crsmain_pk1 = cm.pk1
+INNER JOIN course_users cu ON gg.course_users_pk1 = cu.pk1
+INNER JOIN users u ON cu.users_pk1 = u.pk1
+AND a.STUDENT_SUBMISSION IS NOT null
+and a.student_submission  LIKE '%osv-kaltura%'
+ORDER BY a.attempt_date, gm.title, u.user_id
+
