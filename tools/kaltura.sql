@@ -1,20 +1,5 @@
--- which courses have Kaltura media galleries linked in the Course Menu (B2)
-
-SELECT
-  cm.course_id,
-  ct.label as "Course Menu Item",
-  u.user_id as "Instructor Username",
-  u.FIRSTNAME as "Instructor First Name",
-  u.lastname as "Instructor Last Name",
-  u.email as "Instructor Email Address"  --,  count(cc.pk1) as howmany
-from course_toc ct
-join course_main cm on ct.crsmain_pk1 = cm.pk1
-join course_users cu on cm.pk1 = cu.crsmain_pk1 
-INNER JOIN users u ON cu.users_pk1 = u.pk1
-where cu.role = 'P'
-AND ct.internal_handle = 'osv-kaltura-lti-nav-2'
-ORDER BY cm.course_id
-
+-- Kaltura Queries, mostly by cbray@uark.edu
+-- for LTI tools, the content handler is going to be determined by the LTI Handle that you entered
 
 -- Media Gallery LTI
 
@@ -27,13 +12,13 @@ SELECT
   --,  count(cc.pk1) as howmany
 from course_contents cc
 join course_main cm on cc.crsmain_pk1 = cm.pk1
-join course_users cu on cm.pk1 = cu.crsmain_pk1 
+join course_users cu on cm.pk1 = cu.crsmain_pk1
 INNER JOIN users u ON cu.users_pk1 = u.pk1
 WHERE cm.row_status     ='0'
-and cu.role = 'P'
+--and cu.role = 'P'
 AND cc.cnthndlr_handle = 'resource/x-bb-bltiplacement-KalturaMediaGallery-CT'
 --AND (cc.cnthndlr_handle = 'resource/x-osv-kaltura/mashup' or cc.cnthndlr_handle = 'resource/x-osv-kaltura')
---GROUP BY cm.course_id, cc.cnthndlr_handle, cc.title 
+--GROUP BY cm.course_id, cc.cnthndlr_handle, cc.title
 ORDER BY cm.course_id
 
 
@@ -54,13 +39,11 @@ FROM course_main cm
 INNER JOIN course_contents cc ON cc.crsmain_pk1 = cm.pk1
 left join course_contents ccp on cc.parent_pk1 = ccp.pk1
 join course_users cu on cm.pk1 = cu.crsmain_pk1
-join users u on cu.users_pk1 = u.pk1 
+join users u on cu.users_pk1 = u.pk1
 where cc.cnthndlr_handle = 'resource/x-bb-blti-link'
 and cc.extended_data like '%kaltura%'
 and cc.web_url like '%kaltura%'
---and cm.course_id = '[course_id]'
 AND cu.role = 'P'
---and cc.web_url != 'https://connect.router.integration.prod.mheducation.com/v1/lms/ltiv1p3'
 GROUP BY cc.pk1, cm.course_id, cm.pk1, cc.title, ccp.title
 order by cm.course_id
 
@@ -83,36 +66,58 @@ FROM course_main cm
 INNER JOIN course_contents cc ON cc.crsmain_pk1 = cm.pk1
 left join course_contents ccp on cc.parent_pk1 = ccp.pk1
 join course_users cu on cm.pk1 = cu.crsmain_pk1
-join users u on cu.users_pk1 = u.pk1 
+join users u on cu.users_pk1 = u.pk1
 where cc.cnthndlr_handle = 'resource/x-bb-blti-link'
 and cc.extended_data like '%KalturaIVQ%'
---and cm.course_id like '%[course_id string]%'
+--and cm.course_id like '%1233%'
 AND cu.role = 'P'
 GROUP BY cc.pk1, cm.course_id, cc.title, ccp.title
 order by cm.course_id
 
 
+
 ------- Building Block Counts
+
+
+-- which courses have Kaltura media galleries linked in the Course Menu (B2)
+
+SELECT
+  cm.course_id,
+  ct.label as "Course Menu Item",
+  u.user_id as "Instructor Username",
+  u.FIRSTNAME as "Instructor First Name",
+  u.lastname as "Instructor Last Name",
+  u.email as "Instructor Email Address"  --,  count(cc.pk1) as howmany
+from course_toc ct
+join course_main cm on ct.crsmain_pk1 = cm.pk1
+join course_users cu on cm.pk1 = cu.crsmain_pk1
+INNER JOIN users u ON cu.users_pk1 = u.pk1
+where cu.role = 'P'
+AND ct.internal_handle = 'osv-kaltura-lti-nav-2'
+ORDER BY cm.course_id
+
 
 -- Kaltura B2 Links (Mashups)
 
 SELECT
    cm.course_id,   cc.cnthndlr_handle as "Publisher Tool",   cc.title
+-- STRING_AGG(u.email, ';') AS emails,
+-- string_agg(distinct u.firstname||' '||u.lastname, ', ') as instructors
+--  ,  count(cc.pk1) as howmany
 from course_contents cc
 join course_main cm on cc.crsmain_pk1 = cm.pk1
-join course_users cu on cm.pk1 = cu.crsmain_pk1 
+join course_users cu on cm.pk1 = cu.crsmain_pk1
 INNER JOIN users u ON cu.users_pk1 = u.pk1
 WHERE cm.row_status = '0'
 and cu.role = 'P'
---AND cm.available_ind  ='Y'
 AND cc.cnthndlr_handle like 'resource/x-osv-kaltura%'
+--GROUP BY cm.course_id, cc.cnthndlr_handle, cc.title
 ORDER BY cm.course_id
 
 
 --- Kaltura B2 references in Itens
-
 SELECT cm.course_id, u.user_id, cc.title, cc.cnthndlr_handle,
---cc.MAIN_DATA, 
+--cc.MAIN_DATA,
 cc.DTCREATED, cc.DTMODIFIED
 FROM course_main cm
 JOIN course_contents cc ON cm.pk1 = cc.crsmain_pk1
@@ -123,6 +128,7 @@ JOIN users u ON cu.users_pk1 = u.pk1
 -- AND cm.available_ind  ='Y'
 WHERE cc.MAIN_DATA LIKE '%osv-kaltura-BB5fd0331bb7608%'
 and cc.cnthndlr_handle != 'resource/x-osv-kaltura/mashup'
+--AND dsc.batch_uid = '1229'
 AND cu.role = 'P'
 ORDER BY   cm.course_id
 
@@ -130,7 +136,6 @@ ORDER BY   cm.course_id
 
 -- from Stefano Collovati (SaaS soon - UniBocconi, Italy)
 -- string in announcements:
-
 SELECT cm.course_id, u.USER_ID , aa.SUBJECT, aa.ANNOUNCEMENT, aa.DTCREATED, aa.DTMODIFIED
 FROM course_main cm
 JOIN announcements aa ON cm.pk1 = aa.crsmain_pk1
@@ -161,17 +166,19 @@ WHERE MM.MSG_TEXT like '%osv-kaltura%'
 ORDER BY DTCREATED
 
 
--- Kaltura B2 in Blogs & Journals
+
+-- by Chris Bray
+-- Blogs & Journals in Courses and Orgs
 
 SELECT u.user_id as "Username", u.firstname, u.lastname, cm.course_id,
-    CASE 
+    CASE
         WHEN cm.service_level = 'F' THEN 'Course'
         WHEN cm.service_level = 'C' THEN 'Org'
         ELSE 'OTHER'
     END AS Type,
-b.journal_ind, b.title, be.CREATION_DATE AS "Blog Posted", be.UPDATE_DATE as "Blog Updated", be.TITLE AS "Entry Title", 
+b.journal_ind, b.title, be.CREATION_DATE AS "Blog Posted", be.UPDATE_DATE as "Blog Updated", be.TITLE AS "Entry Title",
 be.anonymous_ind,
-CASE 
+CASE
         WHEN be.status = '1' THEN 'Draft'
         WHEN be.status = '2' THEN 'Posted'
         ELSE 'OTHER'
@@ -186,27 +193,28 @@ f.file_name, f.link_name, be.DESCRIPTION AS "Blog Entry"
   left join files f on bfe.files_pk1 = f.pk1
  JOIN course_main cm ON cu.crsmain_pk1 = cm.pk1
  where be.description like '%osv-kaltura%'
- 
- 
- 
- -- Assessments with Kaltura B2 mashups
- 
+
+
+
+
+
  SELECT cm.course_id, gm.title, qrd.pk1,
 --qrd.data as "Answer Data",
 qad.pk1
 --qad.data as "Question Data"
 FROM gradebook_main gm
-    JOIN course_main cm ON cm.pk1 = gm.crsmain_pk1 
-    JOIN gradebook_grade gg ON gm.pk1 = gg.gradebook_main_pk1 
-    JOIN course_users cu ON cu.pk1 = gg.course_users_pk1 
-    JOIN users u ON u.pk1 = cu.users_pk1 
-    JOIN attempt a ON a.pk1 = gg.last_attempt_pk1 
-    JOIN qti_result_data qrd ON qrd.parent_pk1 = (SELECT pk1 FROM qti_result_data WHERE parent_pk1 = a.qti_result_data_pk1) 
-    JOIN qti_asi_data qad ON qad.pk1 = qrd.qti_asi_data_pk1 
--- questions with kaltura entries    
+    JOIN course_main cm ON cm.pk1 = gm.crsmain_pk1
+    JOIN gradebook_grade gg ON gm.pk1 = gg.gradebook_main_pk1
+    JOIN course_users cu ON cu.pk1 = gg.course_users_pk1
+    JOIN users u ON u.pk1 = cu.users_pk1
+    JOIN attempt a ON a.pk1 = gg.last_attempt_pk1
+    JOIN qti_result_data qrd ON qrd.parent_pk1 = (SELECT pk1 FROM qti_result_data WHERE parent_pk1 = a.qti_result_data_pk1)
+    JOIN qti_asi_data qad ON qad.pk1 = qrd.qti_asi_data_pk1
+-- questions with kaltura entries
 WHERE qad.data  LIKE '%osv-kaltura%'
 -- answers with kaltura entries
 --WHERE qrd.data  LIKE '%osv-kaltura%'
+
 
 
 -- Assignment submissions using the Kaltura B2 Mashup
@@ -221,4 +229,3 @@ INNER JOIN users u ON cu.users_pk1 = u.pk1
 AND a.STUDENT_SUBMISSION IS NOT null
 and a.student_submission  LIKE '%osv-kaltura%'
 ORDER BY a.attempt_date, gm.title, u.user_id
-
