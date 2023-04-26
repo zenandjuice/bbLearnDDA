@@ -1,3 +1,6 @@
+-- Assessment Question Types
+-- by Chris Bray (cbray@uark.edu)
+
 SELECT cm.course_id, u.user_id, qad.title as "Question Title", qad3.title as "Test Title", qad.description as "Question",
 case 
 	when qad.bbmd_assessmenttype = 1 then 'Test'
@@ -23,6 +26,7 @@ case
     WHEN qad.BBMD_QUESTIONTYPE = 15 THEN 'LikeRT Scale'
     WHEN qad.BBMD_QUESTIONTYPE = 16 THEN 'Short Answer'
     WHEN qad.BBMD_QUESTIONTYPE = 17 THEN 'EitherOr'
+    WHEN qad.BBMD_QUESTIONTYPE = 19 THEN 'Ultra Assignment'
     ELSE 'OTHER'
     END AS QUESTION_TYPE
     -- ,encode(qad.data, 'escape')
@@ -42,8 +46,12 @@ AND qad.BBMD_ASI_TYPE = '3'
 -- AND bbmd_assessmenttype = 1
 -- This is the type of this record when bbmd_asi_type=3. 
 -- 1=Multiple Choice, 2=True/False, 3=Multiple Anser, 4=Ordering, 5=Matching, 6=Fill In the Blank, 7=Essay Question, 
--- 8=Numeric, 9=Calculated, 10=FileUpload, 11=HotSpot, 12=FillintheBlankPlus, 13=Jumbled sentence, 14=Quiz Bowl, 15=LikeRT Scale, 16=Short Answer, 17=EitherOr
+-- 8=Numeric, 9=Calculated, 10=FileUpload, 11=HotSpot, 12=FillintheBlankPlus, 13=Jumbled sentence, 14=Quiz Bowl, 15=LikeRT Scale, 16=Short Answer, 17=EitherOr, 19=UltraAssignment
 AND qad.BBMD_QUESTIONTYPE = '18'
+
+
+
+
 
 
 
@@ -75,6 +83,7 @@ SELECT
     WHEN qad.BBMD_QUESTIONTYPE = 15 THEN 'LikeRT Scale'
     WHEN qad.BBMD_QUESTIONTYPE = 16 THEN 'Short Answer'
     WHEN qad.BBMD_QUESTIONTYPE = 17 THEN 'EitherOr'
+    WHEN qad.BBMD_QUESTIONTYPE = 19 THEN 'Ultra Assignment'
     ELSE 'OTHER'
     END AS QUESTION_TYPE,
   qad.BBMD_DATE_ADDED
@@ -86,15 +95,15 @@ JOIN course_users cu on cm.pk1 = cu.crsmain_pk1
 JOIN users u on cu.users_pk1 = u.PK1
 INNER JOIN data_source ds ON cm.data_src_pk1 = ds.pk1
 --- I have a different DSK per term
-WHERE ds.batch_uid = '1223'
+WHERE ds.batch_uid = '1233'
 -- This is the qti asi type for this record. 1=Assessment, 2=Section, 3=Item
 AND qad.BBMD_ASI_TYPE = '3'
 -- BBMD_ASSESSMENTTYPE: This is the assessment type for this record when bbmd_asi_type=1. 1=Test, 2=Quiz (Not used), 3=Survey, 4=Pool
 -- AND bbmd_assessmenttype = 1
 -- This is the type of this record when bbmd_asi_type=3. 
 -- 1=Multiple Choice, 2=True/False, 3=Multiple Anser, 4=Ordering, 5=Matching, 6=Fill In the Blank, 7=Essay Question, 
--- 8=Numeric, 9=Calculated, 10=FileUpload, 11=HotSpot, 12=FillintheBlankPlus, 13=Jumbled sentence, 14=Quiz Bowl, 15=LikeRT Scale, 16=Short Answer, 17=EitherOr
-AND qad.BBMD_QUESTIONTYPE = '9'
+-- 8=Numeric, 9=Calculated, 10=FileUpload, 11=HotSpot, 12=FillintheBlankPlus, 13=Jumbled sentence, 14=Quiz Bowl, 15=LikeRT Scale, 16=Short Answer, 17=EitherOr, 19=UltraAssignment
+AND qad.BBMD_QUESTIONTYPE = '19'
 AND cu.role = 'P'
 ORDER BY cm.course_id, u.user_id, qad.title
 
@@ -103,15 +112,13 @@ ORDER BY cm.course_id, u.user_id, qad.title
 
 -- Count of distinct question types in a semester
 -- 1=Multiple Choice, 2=True/False, 3=Multiple Anser, 4=Ordering, 5=Matching, 6=Fill In the Blank, 7=Essay Question, 
--- 8=Numeric, 9=Calculated, 10=FileUpload, 11=HotSpot, 12=FillintheBlankPlus, 13=Jumbled sentence, 14=Quiz Bowl, 15=LikeRT Scale, 16=Short Answer, 17=EitherOr
--- by Chris Bray (cbray@uark.edu)
+-- 8=Numeric, 9=Calculated, 10=FileUpload, 11=HotSpot, 12=FillintheBlankPlus, 13=Jumbled sentence, 14=Quiz Bowl, 15=LikeRT Scale, 16=Short Answer, 17=EitherOr, 19=UltraAssignment
 
 SELECT DISTINCT(qad.BBMD_QUESTIONTYPE), count (qad.BBMD_QUESTIONTYPE)
 FROM course_main cm
 JOIN qti_asi_data qad ON cm.pk1 = qad.crsmain_pk1
 INNER JOIN data_source ds ON cm.data_src_pk1 = ds.pk1
---- I have a different DSK per term
-WHERE ds.batch_uid = '1223'
+WHERE ds.batch_uid like '%'
 AND qad.BBMD_ASI_TYPE = '3'
 GROUP BY qad.BBMD_QUESTIONTYPE
 ORDER by qad.BBMD_QUESTIONTYPE
