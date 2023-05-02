@@ -30,6 +30,8 @@ JOIN gradebook_main gm ON gm.pk1 = gl.gradebook_main_pk1
 JOIN course_main cm ON cm.pk1 = gm.crsmain_pk1
 WHERE cm.course_id = '[course_id]'
 --and gm.title like 'Exam 3'
-and gl.modifier_username LIKE '[username]'
+and gl.username = '[username]'
+-- use modifier_username to see rows modified by a specific user, such as a REST user
+-- and gl.modifier_username = '[username]'
 and gl.date_logged between '04/25/2023 00:00:00' and '05/02/2023 23:59:59'
 ORDER by cm.course_id, username, date_logged
