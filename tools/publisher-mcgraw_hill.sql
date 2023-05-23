@@ -69,6 +69,7 @@ join course_users cu on cm.pk1 = cu.crsmain_pk1
 join users u on cu.users_pk1 = u.pk1 
 where (cc.cnthndlr_handle LIKE 'APPLICATION/X-MHHE%' or cc.cnthndlr_handle like 'resource/mcgraw%')
 AND cu.role = 'P'
+and cu.row_status = '0'
 AND u.user_id NOT LIKE '%preview%'
 GROUP BY cc.pk1, cm.course_id, cc.title, ccp.title
 order by cm.course_id
@@ -112,6 +113,7 @@ and gm.score_provider_handle != 'resource/x-bb-blti-link'
 --and gm.course_contents_pk1 is NULL
 and gm.deleted_ind = 'N'
 AND cu.role = 'P'
+and cu.row_status = '0'
 group by cm.course_id, cm.pk1, gm.pk1, gm.title, gm.display_title, gm.score_provider_handle,  gm.course_contents_pk1, ccp.title, gm.display_title, gm.deleted_ind, gm.date_modified, gm.scorable_ind, gm.possible, gm.visible_ind, gm.visible_in_book_ind, gm.due_date, gm.date_added, gm.user_created_ind, gm.ext_atmpt_handler_url, gm.lti_res_id
 ORDER BY CM.COURSE_ID, gm.TITLE
 
@@ -153,7 +155,7 @@ where cc.cnthndlr_handle = 'resource/x-bb-blti-link'
 and cc.extended_data like '%mheducation%'
 --and cm.course_id = '[course_id]'
 AND cu.role = 'P'
--- exclude bbstaff users, list 2022-12-02
+and cu.row_status = '0'
 --and cc.web_url != 'https://connect.router.integration.prod.mheducation.com/v1/lms/ltiv1p3'
 GROUP BY cc.pk1, cm.course_id, cm.pk1, cc.title, ccp.title
 order by cm.course_id
