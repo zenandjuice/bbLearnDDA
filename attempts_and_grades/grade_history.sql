@@ -33,10 +33,14 @@ JOIN course_main cm ON cm.pk1 = gm.crsmain_pk1
 left join attempt a on a.pk1 = gl.attempt_pk1 
 left join attempt_receipt ar on ar.attempt_pk1 = a.pk1
 where cm.course_id = '[course_id]
+-- specific Gradebook name
 --and gm.title like '%Exam 3'
+-- specific username
 and gl.username = '[student username]'
 -- use modifier_username to see rows modified by a specific user, such as a REST user
 -- and gl.modifier_username = '[modifier username]'
 -- only for certain date ranges
 --and gl.date_logged between '01/25/2023 00:00:00' and '05/02/2023 23:59:59'
+-- access from specific IP
+-- and gl.modifier_ipaddress = '[IP Address]'
 ORDER by cm.course_id, username, date_logged
