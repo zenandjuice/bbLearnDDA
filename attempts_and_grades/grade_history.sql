@@ -39,6 +39,8 @@ where cm.course_id = '[course_id]
 and gl.username = '[student username]'
 -- use modifier_username to see rows modified by a specific user, such as a REST user
 -- and gl.modifier_username = '[modifier username]'
+-- exclude preview users
+-- and gl.modifier_username NOT LIKE '%preview%'
 -- only for certain date ranges
 --and gl.date_logged between '01/25/2023 00:00:00' and '05/02/2023 23:59:59'
 -- access from specific IP
