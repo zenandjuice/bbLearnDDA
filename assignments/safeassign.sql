@@ -46,3 +46,34 @@ JOIN mdb_safeassign_item msi ON gm.pk1 = msi.gradebook_main_pk1 
 where cm.course_id = 'course_id'
   --and u.user_id not like '%_previewuser'
 ORDER BY gm.title
+
+
+
+------------------------------------------------------------------------------------------------------------------------------
+
+-- Count of Assignments that use SafeAssign, per term
+SELECT t.name as "Term", count(gm.title) as "Total Number of SafeAssignments"
+FROM COURSE_MAIN cm
+inner join course_term ct on ct.crsmain_pk1 = cm.pk1
+inner join term t on t.pk1 = ct.term_pk1 
+JOIN mdb_safeassign_item msi ON msi.crsmain_pk1 = cm.PK1
+JOIN gradebook_main gm ON gm.pk1 = msi.GRADEBOOK_MAIN_PK1
+group by t.name
+order by t.name
+
+
+--- Count of SafeAssignment Submissions/Attempts
+SELECT t.name as "Term", 
+-- adds attempt grades plus manual grades
+count(a.grade) + count(gg.manual_grade)
+from gradebook_grade gg
+join gradebook_main gm on gg.gradebook_main_pk1 = gm.pk1
+join attempt a on gg.last_graded_attempt_pk1 = a.pk1
+join course_users cu on gg.course_users_pk1 = cu.pk1
+join users u on cu.users_pk1 = u.pk1
+join course_main cm on gm.crsmain_pk1 = cm.pk1
+inner join course_term ct on ct.crsmain_pk1 = cm.pk1
+inner join term t on t.pk1 = ct.term_pk1 
+JOIN mdb_safeassign_item msi ON gm.pk1 = msi.gradebook_main_pk1
+group by t.name
+order by t.name
