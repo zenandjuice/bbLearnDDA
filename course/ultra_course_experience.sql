@@ -16,7 +16,7 @@ cm.AVAILABLE_IND,
        CASE
         WHEN cm.ROW_STATUS = 0 THEN 'ENABLED'
         WHEN cm.ROW_STATUS = 2 THEN 'DISABLED'
-        ELSE cm.ROW_STATUS
+        ELSE COALESCE(cm.ROW_STATUS::text,'')
        END AS "Row Status",
 string_agg(distinct u.user_id , ', ') as "Instructor Username",
 string_agg(distinct u.firstname||' '||u.lastname, ', ') as "Instructor Name"
