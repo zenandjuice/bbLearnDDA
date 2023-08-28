@@ -25,5 +25,5 @@ INNER JOIN AUTH_PROVIDER ap ON ap.pk1 = apl.auth_provider_pk1
 WHERE apl.log_date between '03/01/2023 00:00:00' and '03/13/2023 23:59:59'
 and apl.event_type  = '0'
 -- mobile apps consolidated into one
-AND apl.user_agent  LIKE '%Blackboard%'
+AND apl.user_agent ILIKE '%Blackboard%'
 ORDER by apl.log_date 
