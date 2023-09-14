@@ -8,6 +8,7 @@ select distinct(cc.pk1) as "Content pk1",
  cc.title as "Link Title",
  ccp.title as "Folder Title",
  cc.cnthndlr_handle as "Tool",
+ cc.available_ind as "Available to Students?",
  cc.link_ref
 FROM course_main cm
 INNER JOIN course_contents cc ON cc.crsmain_pk1 = cm.pk1
