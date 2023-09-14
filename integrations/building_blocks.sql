@@ -22,6 +22,8 @@ and cc.cnthndlr_handle not like 'resource/x-bb%'
 -- ignore scorm
 and cc.cnthndlr_handle != 'resource/x-plugin-scormengine'
 AND cu.role = 'P'
+-- primary instructors only, if you use that
+--and cu.display_order = '1'
 GROUP BY cc.pk1, cm.course_id, cc.title, ccp.title
 order by cm.course_id
 
